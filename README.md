@@ -1,0 +1,2 @@
+# TickRick
+bot for TickRick
