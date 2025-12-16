@@ -1,15 +1,14 @@
 import config
 import db
 import asyncio
-from aiogram import Bot, Dispatcher
 from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.types import BotCommand
-from reader import get_last_post
-from bot import publish_post
-
-bot = Bot(token=config.BOT_TOKEN)
-dp = Dispatcher()
+from reader import start_userbot
+from worker import post_worker
+from bot import bot, callback_handler, dp, fsm_edit_text_handler, fsm_delay_handler
+from states import PostStates
+from aiogram import F
 
 async def set_commands(bot):
     commands = [
@@ -24,10 +23,14 @@ async def start(msg: Message):
 
 
 async def main():
-    post = await get_last_post()
-    if post and post.text:
-        await publish_post(post.text)
+    await db.init_db()
+    asyncio.create_task(start_userbot())
 
+    asyncio.create_task(post_worker())
+
+    dp.callback_query.register(callback_handler)
+    dp.message.register(fsm_edit_text_handler, F.state == PostStates.editing_text)
+    dp.message.register(fsm_delay_handler, F.state == PostStates.setting_delay)
 
     await set_commands(bot)
     try:

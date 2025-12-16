@@ -1,2 +1,4 @@
 заходим - https://my.telegram.org
 нужно ввести номер телефона для userbot-a, скопировать API_ID и API_HASH и вставить в .env
+
+ADMIN_USER_ID - @userinfobot
