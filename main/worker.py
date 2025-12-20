@@ -1,21 +1,24 @@
 import asyncio
 import db
-from bot import publish_post, bot
-from config import DELAY
+from sender import send_post
+from config import TARGET_CHANNELS
+from bot import client
 
 async def post_worker():
     while True:
-        posts = await db.get_scheduled_posts()
+        settings = await db.get_settings()
+
+        if settings["mode"] != "AUTO":
+            await asyncio.sleep(5)
+            continue
+
+        delay = settings["delay_seconds"]
+        posts = await db.get_unpublished_posts()
+
         for post in posts:
-            if post["mode"].lower() == "manual":
-                continue
-            delay = post.get('delay_seconds') or DELAY
-            try:
-                await publish_post(post, bot_instance=bot)
-                await db.update_post_status(post["id"], "POSTED")
-                print(f"Пост {post['id']} опубликован")
-                await asyncio.sleep(delay)
-            except Exception as e:
-                print(f"Ошибка при публикации {post['id']}: {e}")
-                await db.update_post_status(post["id"], "FAILED")
+            for target in TARGET_CHANNELS:
+                await send_post(post, target, client)
+            await db.update_post_status(post["id"], "POSTED")
+            await asyncio.sleep(delay)
+
         await asyncio.sleep(5)

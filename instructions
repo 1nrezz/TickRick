@@ -1,4 +1,77 @@
-заходим - https://my.telegram.org
-нужно ввести номер телефона для userbot-a, скопировать API_ID и API_HASH и вставить в .env
+TickRick — инструкция по установке и запуску
 
-ADMIN_USER_ID - @userinfobot
+1. Требования
+- Telegram-аккаунт (для userbot)
+- У себя в канала нужно сделать бота администратором
+
+2. Создание Telegram-бота
+- Открой @BotFather
+- /newbot
+- Скопируй BOT TOKEN
+
+3. Получение API_ID и API_HASH (userbot)
+- Зайди на https://my.telegram.org
+- Войди по номеру телефона
+- API development tools
+- Скопируй API_ID и API_HASH
+
+4. Узнать ADMIN_USER_ID
+- Напиши @userinfobot
+- Скопируй свой ID
+
+5. Создание БД PostgreSQL
+- Создай БД
+- Используй существующего пользователя или создай нового
+
+6. Файл .env (в корне проекта)
+
+TOKEN=ВАШ_BOT_TOKEN
+API_ID=ВАШ_API_ID
+API_HASH=ВАШ_API_HASH
+
+DB_USER=postgres
+DB_PASSWORD=ВАШ_ПАРОЛЬ
+DB_NAME=ИМЯ_БАЗЫДАНЫХ
+DB_HOST=localhost
+DB_PORT=5432
+
+ADMIN_USER_ID=ВАШ_TELEGRAM_ID
+
+(пробелы запрещены)
+
+7. Настройка каналов (config.py)
+
+SOURCE_CHANNEL = "username_или_id_источника"
+TARGET_CHANNEL = "@username_канала" - своего
+BOT_USER_ID = "@username_бота"
+
+ВАЖНО:
+- userbot должен быть участником SOURCE_CHANNEL
+- userbot должен быть админом TARGET_CHANNEL
+
+8. Установка зависимостей
+
+pip install aiogram telethon asyncpg python-dotenv
+
+9. Первый запуск
+
+python main.py
+
+- Введи номер телефона
+- Введи код из Telegram
+- Сессия сохранится автоматически
+
+10. Режимы работы
+
+AUTO:
+SOURCE -> TARGET (автоматически)
+
+MANUAL:
+SOURCE -> ЛС бота -> редактирование -> TARGET
+
+Команды:
+ /get_status
+ /mode_auto
+ /mode_manual
+
+Готово.
